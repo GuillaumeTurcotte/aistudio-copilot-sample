@@ -27,6 +27,7 @@ class BR:
         input_description="The br_number of the BR to retreive information about"
     )
     async def GetBRInformation(self, input: str) -> str:
+        print("GetBRInformation")
         #  retrieve documents relevant to the user's question from Cognitive Search
         search_client = SearchClient(
             endpoint=os.environ["AZURE_AI_SEARCH_ENDPOINT"],
@@ -94,6 +95,7 @@ class BR:
         input_description="The question about the BRs; include as many details as possible in the question YEAR AND MONTH",
     )
     async def BrForecast(self, input: str) -> str:
+        print("BrForecast")
         #  retrieve documents relevant to the user's question from Cognitive Search
         search_client = SearchClient(
             endpoint=os.environ["AZURE_AI_SEARCH_ENDPOINT"],

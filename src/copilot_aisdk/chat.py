@@ -15,9 +15,15 @@ from azure.search.documents.aio import SearchClient
 from azure.search.documents.models import RawVectorQuery
 from semantic_kernel.planning import StepwisePlanner
 from semantic_kernel.planning import ActionPlanner
-from semantic_kernel.planning.stepwise_planner.stepwise_planner_config import StepwisePlannerConfig
+from semantic_kernel.planning.basic_planner import BasicPlanner
+
 from streaming_utils import add_context_to_streamed_response
 from semantic_kernel.core_skills import TimeSkill
+
+import logging
+
+logger = logging.getLogger() 
+logger.setLevel(logging.DEBUG)
 
 templateLoader = jinja2.FileSystemLoader(pathlib.Path(__file__).parent.resolve())
 templateEnv = jinja2.Environment(loader=templateLoader)
@@ -83,9 +89,11 @@ async def chat_completion(messages: list[dict], stream: bool = False,
     ask = user_message + "\nThe BR number is 61749; only use this if you need information about a specific BR."
 
     # Create and run plan based on the customer ask
-    planner = ActionPlanner(kernel)
-    plan = await planner.create_plan_async(goal=user_message) # type: ignore
-    result = await plan.invoke_async()
+    planner = BasicPlanner()
+    plan = await planner.create_plan_async(user_message, kernel) # type: ignore
+    #result = await plan.invoke_async()
+    # Execute the plan
+    result = await planner.execute_plan_async(plan, kernel)
     #result = await kernel.run_async(plan)
     #result = await kernel.run_async(function_base["GetBRInformation"], input_str=user_message)
 
