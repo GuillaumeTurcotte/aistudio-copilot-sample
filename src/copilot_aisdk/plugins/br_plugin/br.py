@@ -90,7 +90,7 @@ class BR:
         return result.result
 
     @sk_function(
-        description="Use this function to get the amount of BRs that are forecasted to be delivered in month and year X and Y.",
+        description="Use this function to get the amount of BRs that are forecasted to be delivered in month X and year Y.",
         name="BrForecast",
         input_description="The question about the BRs; include as many details as possible in the question YEAR AND MONTH",
     )
@@ -112,12 +112,11 @@ class BR:
             # use the vector embedding to do a vector search on the index
             vector_query = RawVectorQuery(vector=query_vector, k=self.number_of_docs, fields="vector")
             results = await search_client.search(
-                search_text="",
+                search_text="sa_enddate",
                 vector_queries=[vector_query],
                 select=["title", "chunk"])
             
             async for result in results:
-                #print(result['title'])
                 chunks += f"\n>>> From: {result['title']}\n{result['chunk']}"
 
         self.context += "## BrForecast data\n" + str(chunks) + "\n\n"

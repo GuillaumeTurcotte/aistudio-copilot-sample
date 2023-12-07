@@ -84,17 +84,13 @@ async def chat_completion(messages: list[dict], stream: bool = False,
     # get search documents for the last user message in the conversation
     user_message = messages[-1]["content"]
 
-    # Add hints to the customer ask
-    # TODO: Make the ID configurable
-    ask = user_message + "\nThe BR number is 61749; only use this if you need information about a specific BR."
-
     # Create and run plan based on the customer ask
     planner = BasicPlanner()
     plan = await planner.create_plan_async(user_message, kernel) # type: ignore
-    #result = await plan.invoke_async()
     # Execute the plan
     result = await planner.execute_plan_async(plan, kernel)
-    #result = await kernel.run_async(plan)
+
+    # direct invokation of a function
     #result = await kernel.run_async(function_base["GetBRInformation"], input_str=user_message)
 
      # limit size of returned context
@@ -108,7 +104,7 @@ async def chat_completion(messages: list[dict], stream: bool = False,
     #         "index": 0,
     #         "message": {
     #             "role": "assistant",
-    #             "content": result.result
+    #             "content": result
     #         },
     #         "context": context,
     #     }]
