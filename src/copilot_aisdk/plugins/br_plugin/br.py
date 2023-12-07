@@ -47,7 +47,7 @@ class BR:
                 select=["title", "chunk"])
             
             async for result in results:
-                print(result['title'])
+                #print(result['title'])
                 chunks += f"\n>>> From: {result['title']}\n{result['chunk']}"
 
         self.context += "## GetBRInformation data\n" + str(chunks) + "\n\n"
@@ -86,10 +86,6 @@ class BR:
             kernel.run_async(chat_plugin["qna"], input_vars=variables)
         )
 
-        print("ALl result")
-        print(result.dict)
-        print("-----------------------------------------------------")
-
         return result.result
 
     @sk_function(
@@ -97,14 +93,14 @@ class BR:
         name="BrForecast",
         input_description="The question about the BRs; include as many details as possible in the question YEAR AND MONTH",
     )
-    async def BrForecast(self, question: str) -> str:
-       #  retrieve documents relevant to the user's question from Cognitive Search
+    async def BrForecast(self, input: str) -> str:
+        #  retrieve documents relevant to the user's question from Cognitive Search
         search_client = SearchClient(
             endpoint=os.environ["AZURE_AI_SEARCH_ENDPOINT"],
             credential=AzureKeyCredential(os.environ["AZURE_AI_SEARCH_KEY"]),
             index_name=os.environ["AZURE_AI_SEARCH_INDEX_NAME"])
 
-        embedding = await openai.Embedding.acreate(input=question,
+        embedding = await openai.Embedding.acreate(input=input,
             model=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
             deployment_id=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"])
         query_vector = embedding["data"][0]["embedding"] # type: ignore
@@ -116,11 +112,10 @@ class BR:
             results = await search_client.search(
                 search_text="",
                 vector_queries=[vector_query],
-                search_fields=["title"],
                 select=["title", "chunk"])
             
             async for result in results:
-                print(result['title'])
+                #print(result['title'])
                 chunks += f"\n>>> From: {result['title']}\n{result['chunk']}"
 
         self.context += "## BrForecast data\n" + str(chunks) + "\n\n"
@@ -149,7 +144,7 @@ class BR:
 
         # Set context variables
         variables = sk.ContextVariables()
-        variables["question"] = question
+        variables["question"] = input
         variables["context"] = chunks
 
         # Change temperature of qna semantic function for evaluations
@@ -162,9 +157,5 @@ class BR:
         result = await (
             kernel.run_async(chat_plugin["qna"], input_vars=variables)
         )
-
-        print("ALl result")
-        print(result.dict)
-        print("-----------------------------------------------------")
 
         return result.result
