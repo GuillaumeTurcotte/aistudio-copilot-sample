@@ -48,7 +48,7 @@ class CustomerSupport:
         embedding = await openai.Embedding.acreate(input=question,
             model=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
             deployment_id=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"])
-        query_vector = embedding["data"][0]["embedding"]
+        query_vector = embedding["data"][0]["embedding"] # type: ignore
 
         chunks = ""
         async with search_client:

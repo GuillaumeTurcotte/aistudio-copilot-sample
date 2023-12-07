@@ -23,7 +23,7 @@ async def chat_completion(messages: list[dict], stream: bool = False,
     kernel.add_chat_service(
         "chat_completion",
         AzureChatCompletion(
-            os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"),
+            os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT"), # type: ignore
             os.getenv("OPENAI_API_BASE"),
             os.getenv("OPENAI_API_KEY"),
         )
@@ -49,9 +49,9 @@ async def chat_completion(messages: list[dict], stream: bool = False,
     result = await kernel.run_async(plan)
 
     # limit size of returned context
-    context = customer_support_plugin.context
-    if len(context) > 40000:
-        context = context[:40000]
+    context = customer_support_plugin.context # type: ignore
+    if len(context) > 32000:
+        context = context[:32000] # type: ignore
 
     return {
         "choices": [{

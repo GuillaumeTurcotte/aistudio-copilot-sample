@@ -1,2 +1,2 @@
 semantic-kernel
-openai
+openai==0.27.8
